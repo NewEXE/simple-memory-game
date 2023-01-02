@@ -1,11 +1,8 @@
-﻿using System;
+﻿using GameManagers;
 using TMPro;
 using UnityEngine;
 
 public class UIController : MonoBehaviour {
-    [SerializeField]
-    private SceneController sceneController;
-    
     [SerializeField]
     private TextMeshProUGUI scoreLabel;
     
@@ -13,31 +10,38 @@ public class UIController : MonoBehaviour {
     private TextMeshProUGUI movesLeftLabel;
     
     [SerializeField]
-    private GameObject backgound;
+    private GameObject background;
     
     [SerializeField]
     private GameObject gameOverCanvas;
 
-    private void Start() {
-        this.SetScore(0);
+    private void Update()
+    {
+        SetScore(Managers.GameProcess.GetScore());
+        SetMovesLeft(Managers.GameProcess.GetMovesLeft());
+
+        if (Managers.GameProcess.IsGameOver())
+        {
+            ShowGameOverLabel();
+        }
     }
 
     public void OnStartClick() {
-        this.sceneController.Restart();
+        Managers.GameProcess.Restart();
     }
     
-    public void SetScore(int value) {
-        this.scoreLabel.text = "Score: " + value;
+    private void SetScore(int value) {
+        scoreLabel.text = "Score: " + value;
     }
     
-    public void SetMovesLeft(int value) {
-        this.movesLeftLabel.text = "Moves Left: " + value;
+    private void SetMovesLeft(int value) {
+        movesLeftLabel.text = "Moves Left: " + value;
     }
 
-    public void ShowGameOverLabel() {
-        Vector3 backgroundPos = this.backgound.transform.position;
-        this.backgound.transform.position = new Vector3(backgroundPos.x, backgroundPos.y, -99f);
+    private void ShowGameOverLabel() {
+        Vector3 backgroundPos = background.transform.position;
+        background.transform.position = new Vector3(backgroundPos.x, backgroundPos.y, -99f);
 
-        this.gameOverCanvas.SetActive(true);
+        gameOverCanvas.SetActive(true);
     }
 }
