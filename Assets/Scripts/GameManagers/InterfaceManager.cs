@@ -40,6 +40,8 @@ namespace GameManagers
                     card.transform.position = new Vector3(posX, posY, startPos.z);
                 }
             }
+            
+            base.Startup();
         }
         
         private int[] ShuffleArray(int[] numbers) {
