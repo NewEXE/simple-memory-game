@@ -11,9 +11,8 @@ namespace GameManagers
         
         private const string SceneName = "Game";
         
-        private int _score;
+        private int _score = 0;
         private int _movesLeft = 5;
-        private bool _isGameOver;
 
         public int GetMovesLeft()
         {
@@ -24,12 +23,7 @@ namespace GameManagers
         {
             return _score;
         }
-        
-        public bool IsGameOver()
-        {
-            return _isGameOver;
-        }
-        
+
         public void Restart() {
             SceneManager.LoadScene(SceneName);
         }
@@ -49,21 +43,20 @@ namespace GameManagers
 
         private IEnumerator CheckMatch() {
             if (_firstRevealed.imageId == _secondRevealed.imageId) {
-                // Score was increased
                 _score++;
+                Messenger.Broadcast(GameEvent.REVEAL_MATCHED_CARDS);
             } else {
-                // Moves left decreased
                 yield return new WaitForSeconds(.5f);
 
                 _firstRevealed.Unreveal();
                 _secondRevealed.Unreveal();
             
                 _movesLeft--;
+                Messenger.Broadcast(GameEvent.REVEAL_NOT_MATCHED_CARDS);
             
                 if (_movesLeft == 0)
                 {
-                    // Game was failed, restart.
-                    _isGameOver = true;
+                    Messenger.Broadcast(GameEvent.MOVES_OVER);
                     StartCoroutine(RunGameOver());
                 }
             }

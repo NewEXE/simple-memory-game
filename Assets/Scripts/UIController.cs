@@ -1,4 +1,5 @@
-﻿using GameManagers;
+﻿using System;
+using GameManagers;
 using TMPro;
 using UnityEngine;
 
@@ -15,15 +16,24 @@ public class UIController : MonoBehaviour {
     [SerializeField]
     private GameObject gameOverCanvas;
 
-    private void Update()
+    private void Awake()
+    {
+        Messenger.AddListener(GameEvent.REVEAL_MATCHED_CARDS, OnRevealMatchedCard);
+        Messenger.AddListener(GameEvent.REVEAL_NOT_MATCHED_CARDS, OnRevealNotMatchedCard);
+        Messenger.AddListener(GameEvent.MOVES_OVER, OnMovesOver);
+    }
+
+    private void Start()
     {
         SetScore(Managers.GameProcess.GetScore());
         SetMovesLeft(Managers.GameProcess.GetMovesLeft());
+    }
 
-        if (Managers.GameProcess.IsGameOver())
-        {
-            ShowGameOverLabel();
-        }
+    private void OnDestroy()
+    {
+        Messenger.RemoveListener(GameEvent.REVEAL_MATCHED_CARDS, OnRevealMatchedCard);
+        Messenger.RemoveListener(GameEvent.REVEAL_NOT_MATCHED_CARDS, OnRevealNotMatchedCard);
+        Messenger.RemoveListener(GameEvent.MOVES_OVER, OnMovesOver);
     }
 
     public void OnStartClick() {
@@ -43,5 +53,20 @@ public class UIController : MonoBehaviour {
         background.transform.position = new Vector3(backgroundPos.x, backgroundPos.y, -99f);
 
         gameOverCanvas.SetActive(true);
+    }
+
+    private void OnRevealMatchedCard()
+    {
+        SetScore(Managers.GameProcess.GetScore());
+    }
+    
+    private void OnRevealNotMatchedCard()
+    {
+        SetMovesLeft(Managers.GameProcess.GetMovesLeft());
+    }
+    
+    private void OnMovesOver()
+    {
+        ShowGameOverLabel();
     }
 }
